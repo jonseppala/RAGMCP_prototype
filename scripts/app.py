@@ -149,10 +149,9 @@ MODEL_CATALOG = {
     "anthropic": ["claude-3-5-sonnet-20241022"],
     "google": ["gemini-3.5-flash"],
     "rchat": [
-        "gpt-oss-120b",
+        "Muse Glimmer 30B",
         "gemma-4-31B-it",
-        "Llama-4-Maverick-17B-128E-Instruct-FP8",
-        "NVIDIA-Nemotron-3-Super-120B-A12B-FP8",
+        "Muse Spark 1TB",
     ],
 }
 
