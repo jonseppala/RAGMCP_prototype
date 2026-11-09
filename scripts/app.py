@@ -132,9 +132,29 @@ agent_memory = importlib.util.module_from_spec(_am_spec)  # type: ignore[arg-typ
 sys.modules["agent_memory"] = agent_memory
 _am_spec.loader.exec_module(agent_memory)  # type: ignore[union-attr]
 
-# agent_memory registers REPO_ROOT on sys.path for both direct-script and
-# imported/ASGI entry points. Model discovery has no startup dependencies.
-from scripts.model_catalog import MODEL_CATALOG, RCHAT_BASE_URL, discover_models, provider_for_model
+RCHAT_BASE_URL = "https://rchat.nist.gov/api/v1"
+
+# Models offered in the UI dropdown, grouped by provider. This is just a menu
+# of choices for the frontend -- every request still carries its own
+# caller-supplied API key per provider and its own model selection, so
+# nothing here is a shared/global credential.
+# rchat is the NIST-hosted proxy (OpenAI-compatible) fronting several
+# internally-hosted models; it still needs its own caller-supplied API key,
+# same as the direct-vendor providers below.
+# gemma-4-31B-it cannot disambiguate among >=2 tools under tool_choice="auto"
+# (it returns a blank tool_call with no name/id, which crashes ToolMessage
+# construction). gpt-oss-120b handles multi-tool auto tool-choice correctly.
+MODEL_CATALOG = {
+    "openai": ["gpt-4o"],
+    "anthropic": ["claude-3-5-sonnet-20241022"],
+    "google": ["gemini-3.5-flash"],
+    "rchat": [
+        "Muse Glimmer 30B",
+        "gemma-4-31B-it",
+        "Muse Spark 1TB",
+    ],
+}
+
 
 def _provider_for_model(model: str, provider: str | None = None) -> str:
     try:
